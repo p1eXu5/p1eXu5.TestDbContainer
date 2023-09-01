@@ -14,7 +14,8 @@
     <Nullable>enable</Nullable>
     
     <PackAsTool>true</PackAsTool>
-    <ToolCommandName>testdb</ToolCommandName>
+    <ToolCommandName>test-db</ToolCommandName>
+    <PackageOutputPath>./../../nupkg</PackageOutputPath>
     <IncludeSource>false</IncludeSource>
     
     <Version>1.0.0</Version>
@@ -32,10 +33,7 @@
     <PackageReference Include="Dapper" Version="2.0.151" />
     <PackageReference Include="Docker.DotNet" Version="3.125.15" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.10" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\p1eXu5.CliBootstrap\src\p1eXu5.CliBootstrap\p1eXu5.CliBootstrap.csproj" />
+    <PackageReference Include="p1eXu5.CliBootstrap" Version="1.0.1" />
   </ItemGroup>
 
   <ItemGroup>

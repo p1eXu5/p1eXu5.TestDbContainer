@@ -72,14 +72,21 @@ internal class TestDbOptionsHandler : IOptionsHandler
                 await _dbContext.CreateLastWriteTimeUtcAsync(testDb.ContainerName, modifiedDate);
                 return true;
             }
-            else if (dbModifiedDate!.Value != modifiedDate)
+            else if (DatesAreNotEqual())
             {
                 await _dbContext.UpdateLastWriteTimeUtcAsync(testDb.ContainerName, modifiedDate);
                 return true;
             }
 
             return false;
+
         }
+
+        bool DatesAreEqual()
+            => (modifiedDate - dbModifiedDate!.Value) < TimeSpan.FromMilliseconds(1);
+
+        bool DatesAreNotEqual()
+            => !DatesAreEqual();
 
         async Task CreateAndStartContainer()
         {

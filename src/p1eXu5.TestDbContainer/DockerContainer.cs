@@ -20,9 +20,10 @@ internal sealed class DockerContainer : IDockerContainer
             await Client.Containers.ListContainersAsync(
                 new ContainersListParameters()
                 {
+                    // https://docs.docker.com/engine/reference/commandline/ps/#filter
                     Filters = new Dictionary<string, IDictionary<string, bool>>
                     {
-                        ["ancestor"] = new Dictionary<string, bool>
+                        ["name"] = new Dictionary<string, bool>
                         {
                             [name] = true // "drug-room-core-dev"
                         }
@@ -104,7 +105,7 @@ internal sealed class DockerContainer : IDockerContainer
 
     public bool IsRunning(ContainerListResponse containerListResponse)
     {
-        return false;
+        return containerListResponse.State.Equals("running", StringComparison.OrdinalIgnoreCase);
     }
 
     public async Task RemoveContainerAsync(ContainerListResponse containerListResponse, CancellationToken cancellationToken)
@@ -113,5 +114,16 @@ internal sealed class DockerContainer : IDockerContainer
             containerListResponse.ID,
             new ContainerRemoveParameters { Force = true, RemoveVolumes = true, },
             cancellationToken);
+    }
+
+    public async Task StopContainerAsync(ContainerListResponse containerListResponse, CancellationToken cancellationToken)
+    {
+        if (IsRunning(containerListResponse))
+        {
+            await Client.Containers.StopContainerAsync(
+                containerListResponse.ID,
+                new ContainerStopParameters { },
+                cancellationToken);
+        }
     }
 }

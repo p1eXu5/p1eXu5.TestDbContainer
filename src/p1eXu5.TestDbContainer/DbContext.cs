@@ -12,7 +12,8 @@ internal sealed class DbContext : IDbContext
 
     private DbContext()
     {
-        _connectionString = $"Data Source={Paths.Dbs}";
+        var dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), ".dbs");
+        _connectionString = $"Data Source={dbPath}";
     }
 
     public static DbContext Instance => _instance ??= new();
