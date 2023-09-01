@@ -1,0 +1,1 @@
+powershell -noexit "& "".\reinstall-tool.ps1"""
