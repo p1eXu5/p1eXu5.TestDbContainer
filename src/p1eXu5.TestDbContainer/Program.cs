@@ -1,5 +1,5 @@
 ﻿using p1eXu5.TestDbContainer;
 using TestDbContainer;
 
-await DbContext.Instance.InitAsync();
-await new TestDbContainerBootstrap().RunAsync(args);
+await DbContext.Instance.InitAsync().ConfigureAwait(false);
+await new TestDbContainerBootstrap().RunAsync(args).ConfigureAwait(false);

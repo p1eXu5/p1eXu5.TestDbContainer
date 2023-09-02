@@ -29,7 +29,7 @@ internal sealed class DbContext : IDbContext
                     LastWriteTimeUtc TEXT NOT NULL
                 );
             """;
-        await connection.ExecuteAsync(sql);
+        await connection.ExecuteAsync(sql).ConfigureAwait(false);
     }
 
     public async Task<DateTime?> GetDateModifiedAsync(string name)
@@ -40,8 +40,8 @@ internal sealed class DbContext : IDbContext
             SELECT LastWriteTimeUtc FROM Migrations WHERE Name LIKE '{name}';
             """;
 
-        string? dateModifiedStr = await connection.QuerySingleOrDefaultAsync<string?>(sql);
-        return dateModifiedStr is null ? null : DateTime.Parse(dateModifiedStr);
+        string? dateModifiedStr = await connection.QuerySingleOrDefaultAsync<string?>(sql).ConfigureAwait(false);
+        return dateModifiedStr is null ? null : DateTime.Parse(dateModifiedStr, null);
     }
 
     public async Task UpdateLastWriteTimeUtcAsync(string containerName, DateTime modifiedDate)
@@ -53,7 +53,7 @@ internal sealed class DbContext : IDbContext
             WHERE Name LIKE '{containerName}';
             """;
 
-        await connection.ExecuteAsync(sql);
+        await connection.ExecuteAsync(sql).ConfigureAwait(false);
     }
 
     public async Task CreateLastWriteTimeUtcAsync(string containerName, DateTime modifiedDate)
@@ -65,7 +65,7 @@ internal sealed class DbContext : IDbContext
             VALUES ('{containerName}', '{modifiedDate:yyyy-MM-dd HH:mm:ss.fff}');
             """;
 
-        await connection.ExecuteAsync(sql);
+        await connection.ExecuteAsync(sql).ConfigureAwait(false);
     }
 
     private IDbConnection GetDbConnection()

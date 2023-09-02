@@ -23,6 +23,9 @@ public sealed record TestDbOptions : CommonOptions
     [Option(shortName: 'n', longName: "db-name", Required = true, HelpText = "Database name.")]
     public required string DatabaseName { get; init; }
 
+    [Option(longName: "verbose", HelpText = "Verbose log level.")]
+    public bool Verbose { get; init; }
+
     public static TestDbOptions CoreDomainTestDb { get; } =
         new TestDbOptions
         {

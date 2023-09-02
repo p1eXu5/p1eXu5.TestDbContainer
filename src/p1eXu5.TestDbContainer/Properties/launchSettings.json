@@ -1,12 +1,28 @@
 {
   "profiles": {
-    "WSL": {
-      "commandName": "WSL2",
-      "distributionName": ""
-    },
-    "core domain": {
+    "core domain (development)": {
       "commandName": "Project",
-      "commandLineArgs": "-m D:\\Programming\\FSharp\\_web\\DrugRoom\\src\\DrugRoom.CoreDomain.Adapters.Persistence\\Migrations\r\n-p D:\\Programming\\FSharp\\_web\\DrugRoom\\src\\DrugRoom.CoreDomain.Adapters.Persistence\r\n-s D:\\Programming\\FSharp\\_web\\DrugRoom\\src\\DrugRoom.CoreDomain.WebApi\r\n-c test-core-domain-db\r\n-e 3367\r\n-n drug_room "
+      "commandLineArgs": "-m D:\\Programming\\FSharp\\_web\\DrugRoom\\src\\DrugRoom.CoreDomain.Adapters.Persistence\\Migrations\r\n-p D:\\Programming\\FSharp\\_web\\DrugRoom\\src\\DrugRoom.CoreDomain.Adapters.Persistence\r\n-s D:\\Programming\\FSharp\\_web\\DrugRoom\\src\\DrugRoom.CoreDomain.WebApi\r\n-c test-core-domain-db\r\n-e 3367\r\n-n drug_room",
+      "dotnetRunMessages": true,
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      }
+    },
+    "core domain (production)": {
+      "commandName": "Project",
+      "commandLineArgs": "-m D:\\Programming\\FSharp\\_web\\DrugRoom\\src\\DrugRoom.CoreDomain.Adapters.Persistence\\Migrations\r\n-p D:\\Programming\\FSharp\\_web\\DrugRoom\\src\\DrugRoom.CoreDomain.Adapters.Persistence\r\n-s D:\\Programming\\FSharp\\_web\\DrugRoom\\src\\DrugRoom.CoreDomain.WebApi\r\n-c test-core-domain-db\r\n-e 3367\r\n-n drug_room",
+      "dotnetRunMessages": true,
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Production"
+      }
+    },
+    "core domain (production, verbose)": {
+      "commandName": "Project",
+      "commandLineArgs": "-m D:\\Programming\\FSharp\\_web\\DrugRoom\\src\\DrugRoom.CoreDomain.Adapters.Persistence\\Migrations\r\n-p D:\\Programming\\FSharp\\_web\\DrugRoom\\src\\DrugRoom.CoreDomain.Adapters.Persistence\r\n-s D:\\Programming\\FSharp\\_web\\DrugRoom\\src\\DrugRoom.CoreDomain.WebApi\r\n-c test-core-domain-db\r\n-e 3367\r\n-n drug_room\r\n--verbose",
+      "dotnetRunMessages": true,
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Production"
+      }
     }
   }
 }

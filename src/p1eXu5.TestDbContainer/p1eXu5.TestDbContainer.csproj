@@ -18,15 +18,24 @@
     <PackageOutputPath>./../../nupkg</PackageOutputPath>
     <IncludeSource>false</IncludeSource>
     
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
     <AssemblyVersion>1.0</AssemblyVersion>
-    <FileVersion>1.0.0.0</FileVersion>
+    <FileVersion>1.0.1.0</FileVersion>
     <Authors>p1eXu5</Authors>
     <Copyright>2023 Vladimir Likhatskiy</Copyright>
     <NeutralLanguage>en-US</NeutralLanguage>
     <RepositoryUrl></RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>test;db;docker;container;</PackageTags>
+
+    <AnalysisLevel>latest-All</AnalysisLevel>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <CodeAnalysisTreatWarningsAsErrors>True</CodeAnalysisTreatWarningsAsErrors>
+    <RunAnalyzersDuringBuild>True</RunAnalyzersDuringBuild>
+    <RunAnalyzersDuringLiveAnalysis>True</RunAnalyzersDuringLiveAnalysis>
+    <NoWarn>$(NoWarn);CA1848;</NoWarn>
+    <WarningsNotAsErrors>VSSpell001;VSSpell002;</WarningsNotAsErrors>
   </PropertyGroup>
 
   <ItemGroup>

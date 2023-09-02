@@ -1,37 +1,65 @@
-﻿using Docker.DotNet;
+﻿using System.Diagnostics.CodeAnalysis;
+using Docker.DotNet;
 using Docker.DotNet.Models;
+using Microsoft.Extensions.Logging;
 using p1eXu5.TestDbContainer.Interfaces;
 
 namespace TestDbContainer;
 
-internal sealed class DockerContainer : IDockerContainer
+internal sealed class DockerContainer : IDockerContainer, IDisposable
 {
-    public static DockerClient? _client;
+    public DockerClient? _client;
+    private bool _disposedValue;
+    private readonly ILogger<DockerContainer> _logger;
 
-    public static DockerClient Client => _client ??= new DockerClientConfiguration().CreateClient();
+    public DockerContainer(ILogger<DockerContainer> logger)
+    {
+        _logger = logger;
+    }
+
+    [SuppressMessage("Reliability", "CA2000:Dispose objects before losing scope", Justification = "See Dispose()")]
+    public DockerClient Client => _client ??= new DockerClientConfiguration().CreateClient();
+
+    public void Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
 
     /// <summary>
     /// </summary>
     /// <param name="name">For example: <c>"drug-room-core-dev"</c></param>
     /// <returns></returns>
-    public async Task<ContainerListResponse?> FindAsync(string name)
+    public async Task<ContainerListResponse?> FindAsync(string name, CancellationToken cancellationToken)
     {
-        IList<ContainerListResponse> containers =
-            await Client.Containers.ListContainersAsync(
-                new ContainersListParameters()
-                {
-                    // https://docs.docker.com/engine/reference/commandline/ps/#filter
-                    Filters = new Dictionary<string, IDictionary<string, bool>>
-                    {
-                        ["name"] = new Dictionary<string, bool>
+        try
+        {
+            IList<ContainerListResponse> containers =
+                await Client.Containers
+                    .ListContainersAsync(
+                        new ContainersListParameters()
                         {
-                            [name] = true // "drug-room-core-dev"
-                        }
-                    },
-                    All = true,
-                });
+                            // https://docs.docker.com/engine/reference/commandline/ps/#filter
+                            Filters = new Dictionary<string, IDictionary<string, bool>>
+                            {
+                                ["name"] = new Dictionary<string, bool>
+                                {
+                                    [name] = true // "drug-room-core-dev"
+                                }
+                            },
+                            All = true,
+                        },
+                        cancellationToken)
+                    .ConfigureAwait(false);
 
-        return containers.FirstOrDefault();
+            return containers.FirstOrDefault();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Find container error!");
+            throw;
+        }
     }
 
     /// <summary>
@@ -39,7 +67,7 @@ internal sealed class DockerContainer : IDockerContainer
     /// </summary>
     /// <param name="testDb"></param>
     /// <returns></returns>
-    public async Task<CreateContainerResponse> CreateContainerAsync(TestDbOptions testDb)
+    public async Task<CreateContainerResponse> CreateContainerAsync(TestDbOptions testDb, CancellationToken cancellationToken)
     {
         var exposedPorts = new Dictionary<string, EmptyStruct>()
         {
@@ -50,7 +78,7 @@ internal sealed class DockerContainer : IDockerContainer
         var oneHostBinding = new PortBinding()
         {
             HostIP = "0.0.0.0",
-            HostPort = testDb.ContainerExternalPort.ToString(),
+            HostPort = testDb.ContainerExternalPort.ToString(provider: null),
         };
 
         var hostBindingsList = new List<PortBinding>() { oneHostBinding };
@@ -61,46 +89,57 @@ internal sealed class DockerContainer : IDockerContainer
             { "33060/tcp", new List<PortBinding>() },
         };
 
-        return await Client.Containers.CreateContainerAsync(new CreateContainerParameters()
-        {
-            Image = "mysql:8.0.33",
-            Name = testDb.ContainerName,
-            HostConfig = new HostConfig()
-            {
-                RestartPolicy = new RestartPolicy() { Name = RestartPolicyKind.No },
-                PortBindings = portBindings,
-                NetworkMode = "bridge"
-            },
-            Env = new List<string>()
-            {
-                "ACCEPT_EULA=Y",
-                "MYSQL_ROOT_PASSWORD=admin",
-                "MYSQL_DATABASE=drug_room",
-                "MYSQL_USER=admin",
-                "MYSQL_PASSWORD=admin",
-            },
-            // ExposedPorts = exposedPorts, // only inside docker world
-            Healthcheck = new HealthConfig()
-            {
-                Test = new List<string> { "CMD", "mysqladmin", "ping", "-h", "localhost" },
-                Timeout = TimeSpan.FromSeconds(5),
-                Retries = 5,
-            },
-        });
+        return
+            await Client.Containers
+                .CreateContainerAsync(
+                    new CreateContainerParameters()
+                    {
+                        Image = "mysql:8.0.33",
+                        Name = testDb.ContainerName,
+                        HostConfig = new HostConfig()
+                        {
+                            RestartPolicy = new RestartPolicy() { Name = RestartPolicyKind.No },
+                            PortBindings = portBindings,
+                            NetworkMode = "bridge"
+                        },
+                        Env = new List<string>()
+                        {
+                            "ACCEPT_EULA=Y",
+                            "MYSQL_ROOT_PASSWORD=admin",
+                            "MYSQL_DATABASE=drug_room",
+                            "MYSQL_USER=admin",
+                            "MYSQL_PASSWORD=admin",
+                        },
+                        // ExposedPorts = exposedPorts, // only inside docker world
+                        Healthcheck = new HealthConfig()
+                        {
+                            Test = new List<string> { "CMD", "mysqladmin", "ping", "-h", "localhost" },
+                            Timeout = TimeSpan.FromSeconds(5),
+                            Retries = 5,
+                        },
+                    },
+                    cancellationToken)
+                .ConfigureAwait(false);
     }
 
-    public async Task StartContainerAsync(CreateContainerResponse createContainerResponse)
+    public async Task StartContainerAsync(CreateContainerResponse createContainerResponse, CancellationToken cancellationToken)
     {
-        await Client.Containers.StartContainerAsync(
-            createContainerResponse.ID,
-            new ContainerStartParameters { });
+        await Client.Containers
+            .StartContainerAsync(
+                createContainerResponse.ID,
+                new ContainerStartParameters { },
+                cancellationToken)
+            .ConfigureAwait(false);
     }
 
-    public async Task StartContainerAsync(ContainerListResponse createListResponse)
+    public async Task StartContainerAsync(ContainerListResponse createListResponse, CancellationToken cancellationToken)
     {
-        await Client.Containers.StartContainerAsync(
-            createListResponse.ID,
-            new ContainerStartParameters { });
+        await Client.Containers
+            .StartContainerAsync(
+                createListResponse.ID,
+                new ContainerStartParameters { },
+                cancellationToken)
+            .ConfigureAwait(false);
     }
 
     public bool IsRunning(ContainerListResponse containerListResponse)
@@ -113,7 +152,8 @@ internal sealed class DockerContainer : IDockerContainer
         await Client.Containers.RemoveContainerAsync(
             containerListResponse.ID,
             new ContainerRemoveParameters { Force = true, RemoveVolumes = true, },
-            cancellationToken);
+            cancellationToken)
+            .ConfigureAwait(false);
     }
 
     public async Task StopContainerAsync(ContainerListResponse containerListResponse, CancellationToken cancellationToken)
@@ -123,7 +163,31 @@ internal sealed class DockerContainer : IDockerContainer
             await Client.Containers.StopContainerAsync(
                 containerListResponse.ID,
                 new ContainerStopParameters { },
-                cancellationToken);
+                cancellationToken)
+                .ConfigureAwait(false);
         }
     }
+
+    private void Dispose(bool disposing)
+    {
+        if (!_disposedValue)
+        {
+            if (disposing)
+            {
+                // TODO: dispose managed state (managed objects)
+                _client?.Dispose();
+            }
+
+            // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+            // TODO: set large fields to null
+            _disposedValue = true;
+        }
+    }
+
+    // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+    // ~DockerContainer()
+    // {
+    //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+    //     Dispose(disposing: false);
+    // }
 }
