@@ -482,3 +482,5 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+/doc/design/test-db-comtainer.vpp.bak_000f
+/doc/design/test-db-comtainer.vpp.bak_001d

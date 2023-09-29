@@ -5,32 +5,41 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using p1eXu5.CliBootstrap;
 using p1eXu5.CliBootstrap.CommandLineParser;
+using p1eXu5.TestDbContainer.Handlers;
 using p1eXu5.TestDbContainer.Interfaces;
+using p1eXu5.TestDbContainer.Options;
 using TestDbContainer;
 
 namespace p1eXu5.TestDbContainer;
 
-internal sealed class TestDbContainerBootstrap : Bootstrap
+internal class TestDbContainerBootstrap : Bootstrap
 {
     protected override ParsingResult ParseCommandLineArguments(string[] args)
     {
-        return ArgsParser.Parse<TestDbOptions>(args);
+        return ArgsParser.Parse<ContainerVerb, ComposeVerb>(args);
     }
 
     protected override void ConfigureServices(IServiceCollection services, IConfiguration configuration, ParsingResult parsingResult)
     {
         base.ConfigureServices(services, configuration, parsingResult);
-
-        services.TryAddSingleton<IOptionsHandler>(sp =>
+        services.TryAddSingleton<IOptionsHandler, OptionsHandler>();
+        services.TryAddSingleton(sp =>
         {
             var logger = sp.GetRequiredService<ILoggerFactory>().CreateLogger("test-db");
             return
-                (IOptionsHandler)ActivatorUtilities.CreateInstance(sp, typeof(TestDbOptionsHandler), logger);
+                (ContainerVerbHandler)ActivatorUtilities.CreateInstance(sp, typeof(ContainerVerbHandler), logger);
+        });
+        services.TryAddSingleton(sp =>
+        {
+            var logger = sp.GetRequiredService<ILoggerFactory>().CreateLogger("test-db");
+            return
+                (ComposeVerbHandler)ActivatorUtilities.CreateInstance(sp, typeof(ComposeVerbHandler), logger);
         });
         services.TryAddSingleton<IDockerContainer, DockerContainer>();
-        services.TryAddSingleton<IPhysicalDirectory, PhysicalDirectory>();
+        services.TryAddSingleton<IMigrationFolder, MigrationFolder>();
         services.TryAddSingleton<IDbContext>(DbContext.Instance);
         services.TryAddSingleton<IDotnetCli, DotnetCli>();
+        services.TryAddSingleton<IComposeFileParser, ComposeFileParser>();
     }
 
     protected override void ConfigureConsoleLogging(HostBuilderContext context, ILoggingBuilder loggingBuilder, ParsingResult parsingResult)
@@ -39,7 +48,7 @@ internal sealed class TestDbContainerBootstrap : Bootstrap
 
         var options = parsingResult switch
         {
-            ParsingResult.Success<TestDbOptions> s => s.Options,
+            ParsingResult.Success<TestDbOptionsBase> s => s.Options,
             _ => null
         };
 
@@ -55,5 +64,11 @@ internal sealed class TestDbContainerBootstrap : Bootstrap
                 return false;
             });
         }
+    }
+
+    protected override void OnApplicationStarting(IHost host, ParsingResult parsingResult)
+    {
+        var logger = GetAppLogger(host.Services);
+        logger.LogInformation("test-db container started...");
     }
 }

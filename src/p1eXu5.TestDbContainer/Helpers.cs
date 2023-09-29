@@ -2,5 +2,5 @@
 
 internal static class Helpers
 {
-    public static bool NotHasValue(this DateTime? dt) => !dt.HasValue;
+    public static bool HasNoValue(this DateTime? dt) => !dt.HasValue;
 }

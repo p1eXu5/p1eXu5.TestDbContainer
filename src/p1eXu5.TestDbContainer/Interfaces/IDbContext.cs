@@ -2,7 +2,9 @@
 
 internal interface IDbContext
 {
-    Task CreateLastWriteTimeUtcAsync(string containerName, DateTime modifiedDate);
-    Task<DateTime?> GetDateModifiedAsync(string name);
-    Task UpdateLastWriteTimeUtcAsync(string containerName, DateTime modifiedDate);
+    Task CreateLastWriteTimeUtcAsync(string migrationAlias, DateTime modifiedDate);
+
+    Task<DateTime?> GetDateModifiedAsync(string migrationAlias);
+    
+    Task UpdateLastWriteTimeUtcAsync(string migrationAlias, DateTime modifiedDate);
 }

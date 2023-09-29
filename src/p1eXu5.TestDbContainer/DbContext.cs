@@ -12,7 +12,13 @@ internal sealed class DbContext : IDbContext
 
     private DbContext()
     {
-        var dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), ".dbs");
+        var testDbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "test-db");
+        if (!Directory.Exists(testDbPath))
+        {
+            Directory.CreateDirectory(testDbPath);
+        }
+
+        var dbPath = Path.Combine(testDbPath, ".dbs");
         _connectionString = $"Data Source={dbPath}";
     }
 
@@ -24,51 +30,51 @@ internal sealed class DbContext : IDbContext
         var sql =
             """
                 CREATE TABLE IF NOT EXISTS 
-                Migrations (
-                    Name TEXT NOT NULL PRIMARY KEY,
+                Migration (
+                    Alias TEXT NOT NULL PRIMARY KEY,
                     LastWriteTimeUtc TEXT NOT NULL
                 );
             """;
         await connection.ExecuteAsync(sql).ConfigureAwait(false);
     }
 
-    public async Task<DateTime?> GetDateModifiedAsync(string name)
+    public async Task<DateTime?> GetDateModifiedAsync(string migrationAlias)
     {
         using var connection = GetDbConnection();
         var sql =
             $"""
-            SELECT LastWriteTimeUtc FROM Migrations WHERE Name LIKE '{name}';
+            SELECT LastWriteTimeUtc FROM Migration WHERE Alias LIKE '{migrationAlias}';
             """;
 
         string? dateModifiedStr = await connection.QuerySingleOrDefaultAsync<string?>(sql).ConfigureAwait(false);
         return dateModifiedStr is null ? null : DateTime.Parse(dateModifiedStr, null);
     }
 
-    public async Task UpdateLastWriteTimeUtcAsync(string containerName, DateTime modifiedDate)
+    public async Task UpdateLastWriteTimeUtcAsync(string migrationAlias, DateTime modifiedDate)
     {
         using var connection = GetDbConnection();
         var sql =
             $"""
-            UPDATE Migrations SET LastWriteTimeUtc = '{modifiedDate:yyyy-MM-dd HH:mm:ss.fff}'
-            WHERE Name LIKE '{containerName}';
+            UPDATE Migration SET LastWriteTimeUtc = '{modifiedDate:yyyy-MM-dd HH:mm:ss.fff}'
+            WHERE Alias LIKE '{migrationAlias}';
             """;
 
         await connection.ExecuteAsync(sql).ConfigureAwait(false);
     }
 
-    public async Task CreateLastWriteTimeUtcAsync(string containerName, DateTime modifiedDate)
+    public async Task CreateLastWriteTimeUtcAsync(string migrationAlias, DateTime modifiedDate)
     {
         using var connection = GetDbConnection();
         var sql =
             $"""
-            INSERT INTO Migrations (Name, LastWriteTimeUtc)
-            VALUES ('{containerName}', '{modifiedDate:yyyy-MM-dd HH:mm:ss.fff}');
+            INSERT INTO Migration (Alias, LastWriteTimeUtc)
+            VALUES ('{migrationAlias}', '{modifiedDate:yyyy-MM-dd HH:mm:ss.fff}');
             """;
 
         await connection.ExecuteAsync(sql).ConfigureAwait(false);
     }
 
-    private IDbConnection GetDbConnection()
+    private SqliteConnection GetDbConnection()
     {
         return new SqliteConnection(_connectionString);
     }

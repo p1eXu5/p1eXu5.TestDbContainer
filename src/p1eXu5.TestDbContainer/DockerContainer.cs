@@ -67,7 +67,7 @@ internal sealed class DockerContainer : IDockerContainer, IDisposable
     /// </summary>
     /// <param name="testDb"></param>
     /// <returns></returns>
-    public async Task<CreateContainerResponse> CreateContainerAsync(TestDbOptions testDb, CancellationToken cancellationToken)
+    public async Task<CreateContainerResponse> CreateContainerAsync(IMySqlContainerParameters testDb, CancellationToken cancellationToken)
     {
         var exposedPorts = new Dictionary<string, EmptyStruct>()
         {
@@ -106,7 +106,7 @@ internal sealed class DockerContainer : IDockerContainer, IDisposable
                         {
                             "ACCEPT_EULA=Y",
                             "MYSQL_ROOT_PASSWORD=admin",
-                            "MYSQL_DATABASE=drug_room",
+                            $"MYSQL_DATABASE={testDb.DatabaseName}",
                             "MYSQL_USER=admin",
                             "MYSQL_PASSWORD=admin",
                         },

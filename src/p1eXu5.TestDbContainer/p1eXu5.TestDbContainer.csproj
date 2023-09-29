@@ -1,13 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>
-      Test DB Container Tool for the .NET Command-Line Interface.
+    <Description>Test DB Container Tool for the .NET Command-Line Interface</Description>
 
-      Enables these commonly used test-db commands:
-      testdb
-    </Description>
-    
     <OutputType>Exe</OutputType>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -18,9 +13,9 @@
     <PackageOutputPath>./../../nupkg</PackageOutputPath>
     <IncludeSource>false</IncludeSource>
     
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <AssemblyVersion>1.0</AssemblyVersion>
-    <FileVersion>1.0.1.0</FileVersion>
+    <FileVersion>1.0.2.0</FileVersion>
     <Authors>p1eXu5</Authors>
     <Copyright>2023 Vladimir Likhatskiy</Copyright>
     <NeutralLanguage>en-US</NeutralLanguage>
@@ -42,7 +37,8 @@
     <PackageReference Include="Dapper" Version="2.0.151" />
     <PackageReference Include="Docker.DotNet" Version="3.125.15" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="7.0.10" />
-    <PackageReference Include="p1eXu5.CliBootstrap" Version="1.0.1" />
+    <PackageReference Include="p1eXu5.CliBootstrap" Version="1.0.3" />
+    <PackageReference Include="YamlDotNet" Version="13.4.0" />
   </ItemGroup>
 
   <ItemGroup>

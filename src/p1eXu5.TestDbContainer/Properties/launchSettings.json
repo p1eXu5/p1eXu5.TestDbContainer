@@ -1,28 +1,68 @@
 {
   "profiles": {
-    "core domain (development)": {
+    "--help": {
       "commandName": "Project",
-      "commandLineArgs": "-m D:\\Programming\\FSharp\\_web\\DrugRoom\\src\\DrugRoom.CoreDomain.Adapters.Persistence\\Migrations\r\n-p D:\\Programming\\FSharp\\_web\\DrugRoom\\src\\DrugRoom.CoreDomain.Adapters.Persistence\r\n-s D:\\Programming\\FSharp\\_web\\DrugRoom\\src\\DrugRoom.CoreDomain.WebApi\r\n-c test-core-domain-db\r\n-e 3367\r\n-n drug_room",
-      "dotnetRunMessages": true,
+      "commandLineArgs": "--help",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Development"
-      }
+      },
+      "dotnetRunMessages": true
     },
-    "core domain (production)": {
+    "help": {
+      "commandName": "Project",
+      "commandLineArgs": "--help",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      },
+      "dotnetRunMessages": true
+    },
+    "--version": {
+      "commandName": "Project",
+      "commandLineArgs": "--help",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      },
+      "dotnetRunMessages": true
+    },
+    "version": {
+      "commandName": "Project",
+      "commandLineArgs": "--help",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      },
+      "dotnetRunMessages": true
+    },
+    "core domain: container (development)": {
       "commandName": "Project",
       "commandLineArgs": "-m D:\\Programming\\FSharp\\_web\\DrugRoom\\src\\DrugRoom.CoreDomain.Adapters.Persistence\\Migrations\r\n-p D:\\Programming\\FSharp\\_web\\DrugRoom\\src\\DrugRoom.CoreDomain.Adapters.Persistence\r\n-s D:\\Programming\\FSharp\\_web\\DrugRoom\\src\\DrugRoom.CoreDomain.WebApi\r\n-c test-core-domain-db\r\n-e 3367\r\n-n drug_room",
-      "dotnetRunMessages": true,
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      },
+      "dotnetRunMessages": true
+    },
+    "core domain: container (production)": {
+      "commandName": "Project",
+      "commandLineArgs": "-m D:\\Programming\\FSharp\\_web\\DrugRoom\\src\\DrugRoom.CoreDomain.Adapters.Persistence\\Migrations\r\n-p D:\\Programming\\FSharp\\_web\\DrugRoom\\src\\DrugRoom.CoreDomain.Adapters.Persistence\r\n-s D:\\Programming\\FSharp\\_web\\DrugRoom\\src\\DrugRoom.CoreDomain.WebApi\r\n-c test-core-domain-db\r\n-e 3367\r\n-n drug_room",
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Production"
-      }
+      },
+      "dotnetRunMessages": true
     },
-    "core domain (production, verbose)": {
+    "core domain: container (production, verbose)": {
       "commandName": "Project",
       "commandLineArgs": "-m D:\\Programming\\FSharp\\_web\\DrugRoom\\src\\DrugRoom.CoreDomain.Adapters.Persistence\\Migrations\r\n-p D:\\Programming\\FSharp\\_web\\DrugRoom\\src\\DrugRoom.CoreDomain.Adapters.Persistence\r\n-s D:\\Programming\\FSharp\\_web\\DrugRoom\\src\\DrugRoom.CoreDomain.WebApi\r\n-c test-core-domain-db\r\n-e 3367\r\n-n drug_room\r\n--verbose",
-      "dotnetRunMessages": true,
       "environmentVariables": {
         "DOTNET_ENVIRONMENT": "Production"
-      }
+      },
+      "dotnetRunMessages": true
+    },
+    "auth: compose (development)": {
+      "commandName": "Project",
+      "commandLineArgs": "compose\r\n-m D:\\Programming\\FSharp\\_web\\DrugRoom\\auth_\\src\\DrugRoom.Auth.AuthorizationServer\\Migrations\r\n-p D:\\Programming\\FSharp\\_web\\DrugRoom\\auth_\\src\\DrugRoom.Auth.AuthorizationServer\r\n-s D:\\Programming\\FSharp\\_web\\DrugRoom\\auth_\\src\\DrugRoom.Auth.AuthorizationServer\r\n-y D:\\Programming\\FSharp\\_web\\DrugRoom\\auth_\\docker-compose.yaml\r\n-c identity_db",
+      "environmentVariables": {
+        "DOTNET_ENVIRONMENT": "Development"
+      },
+      "dotnetRunMessages": true
     }
   }
 }
