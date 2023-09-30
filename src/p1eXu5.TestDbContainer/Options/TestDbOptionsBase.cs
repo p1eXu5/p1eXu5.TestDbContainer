@@ -10,19 +10,30 @@ internal abstract record TestDbOptionsBase : CliOptions
     [Option(shortName: 'c', longName: "container-name", Required = true, HelpText = "Database docker container name.")]
     public required string ContainerName { get; init; }
 
-    [Option(shortName: 'm', longName: "migrations", Required = true, HelpText = "Migrations folder path.")]
-    public required string MigrationPath { private get; init; }
-
     [Option(shortName: 'p', longName: "project", Required = true, HelpText = "The project to use.")]
-    public required string MigrationProjectPath { get; init; }
+    public required string ProjectPath { get; init; }
 
-    [Option(shortName: 's', longName: "startup-project", Required = true, HelpText = "The startup project to use.")]
-    public required string StartupProjectPath { get; init; }
+    [Option(shortName: 'm', longName: "migrations", HelpText = "Migrations folder path.")]
+    public string? MigrationPath { internal get; init; }
+
+    [Option(shortName: 's', longName: "startup-project", HelpText = "The startup project to use.")]
+    public string? StartupProjectPath { get; init; }
 
     [Option(longName: "verbose", HelpText = "Verbose log level.")]
     public bool Verbose { get; init; }
 
-    public MigrationFolderPath MigrationFolderPath => new MigrationFolderPath(MigrationPath);
+    public MigrationFolderPath MigrationFolderPath
+    {
+        get
+        {
+            ArgumentNullException.ThrowIfNull(MigrationPath, nameof(MigrationPath));
+            return new MigrationFolderPath(MigrationPath);
+        }
+    }
+
+    public bool MigrationPathIsSet => MigrationPath is not null;
+
+    public bool StartupProjectPathIsSet => StartupProjectPath is not null;
 
     /*
     public static TestDbOptionsBase CoreDomainTestDb { get; } =

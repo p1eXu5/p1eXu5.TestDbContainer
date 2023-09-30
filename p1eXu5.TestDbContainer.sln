@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{01E50E86-2
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "p1eXu5.TestDbContainer.Tests", "test\p1eXu5.TestDbContainer.Tests\p1eXu5.TestDbContainer.Tests.csproj", "{C0AE812A-124D-4E9E-8227-CEF5954CDAC5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{16D05A57-9757-437F-B654-1F323DCA200A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{982B1C79-0C06-4B40-B1CC-F4634B96BF3B} = {D28ED2B6-19C5-4EB0-9C6B-DEB651652A55}
 		{C0AE812A-124D-4E9E-8227-CEF5954CDAC5} = {01E50E86-2F9D-44C3-AB70-A6BFC2984EE0}
+		{16D05A57-9757-437F-B654-1F323DCA200A} = {D28ED2B6-19C5-4EB0-9C6B-DEB651652A55}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E6D494B2-292B-40D8-B070-FCBEC2FFBB81}

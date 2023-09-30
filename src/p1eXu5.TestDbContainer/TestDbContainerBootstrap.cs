@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using p1eXu5.CliBootstrap;
 using p1eXu5.CliBootstrap.CommandLineParser;
+using p1eXu5.Result.Extensions;
 using p1eXu5.TestDbContainer.Handlers;
 using p1eXu5.TestDbContainer.Interfaces;
 using p1eXu5.TestDbContainer.Options;
@@ -14,9 +15,37 @@ namespace p1eXu5.TestDbContainer;
 
 internal class TestDbContainerBootstrap : Bootstrap
 {
+    protected virtual VerbBuilder VerbBuilder => new VerbBuilder();
+
     protected override ParsingResult ParseCommandLineArguments(string[] args)
     {
-        return ArgsParser.Parse<ContainerVerb, ComposeVerb>(args);
+        var parsingResult = ArgsParser.Parse<ContainerVerb, ComposeVerb>(args);
+
+        if (parsingResult is ParsingResult.Success<ContainerVerb> containerVerb)
+        {
+            return Confirm(containerVerb);
+        }
+
+        if (parsingResult is ParsingResult.Success<ComposeVerb> composeVerb)
+        {
+            return Confirm(composeVerb);
+        }
+
+        return parsingResult;
+    }
+
+    private ParsingResult Confirm<TVerb>(ParsingResult.Success<TVerb> success)
+        where TVerb : TestDbOptionsBase
+    {
+        var confirmResult = VerbBuilder.BuildVerb(success.Options);
+        if (confirmResult.TryGetSuccessContext(out var confirmContext))
+        {
+            return new ParsingResult.Success<TVerb>(confirmContext);
+        }
+        else
+        {
+            return new ParsingResult.Error(confirmResult.FailedContext());
+        }
     }
 
     protected override void ConfigureServices(IServiceCollection services, IConfiguration configuration, ParsingResult parsingResult)

@@ -42,7 +42,7 @@ internal sealed class DotnetCli : IDotnetCli
             "database",
             "update",
             "--connection", $"{connectionString(LocalIP)}",
-            "-p", $"{testDb.MigrationProjectPath}",
+            "-p", $"{testDb.ProjectPath}",
             "-s", $"{testDb.StartupProjectPath}");
     }
 
@@ -54,7 +54,7 @@ internal sealed class DotnetCli : IDotnetCli
             "migrations",
             "add",
             "Init",
-            "-p", $"{testDb.MigrationProjectPath}",
+            "-p", $"{testDb.ProjectPath}",
             "-s", $"{testDb.StartupProjectPath}");
     }
 
