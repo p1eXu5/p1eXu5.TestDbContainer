@@ -1,4 +1,5 @@
-﻿using p1eXu5.Result;
+﻿using System.IO;
+using p1eXu5.Result;
 using p1eXu5.Result.Extensions;
 
 namespace p1eXu5.TestDbContainer.Options;
@@ -24,12 +25,30 @@ internal class VerbBuilder
     protected virtual Result<TVerb, string> ConfirmMigrationsFolder<TVerb>(TVerb options)
         where TVerb : TestDbOptionsBase
     {
-        var migrationsPath =
-            options.MigrationPathIsSet
-                ? options.MigrationPath
-                : Path.Combine(options.ProjectPath, "Migrations");
+        if (!options.MigrationPathIsSet)
+        {
+            var migrationFolders =
+               Directory
+                   .EnumerateDirectories(
+                       options.ProjectPath,
+                       $"Migrations",
+                       new EnumerationOptions { RecurseSubdirectories = true, MaxRecursionDepth = 6 })
+                   .ToArray();
 
-        if (Directory.Exists(migrationsPath))
+            if (migrationFolders.Length == 0)
+            {
+                return $"Could not find Migrations folder in {options.ProjectPath}".ToError<TVerb>();
+            }
+
+            if (migrationFolders.Length > 1)
+            {
+                return $"There are several Migrations folder in {options.ProjectPath}. Need to refine Migrations folder.".ToError<TVerb>();
+            }
+
+            return (options with { MigrationPath = migrationFolders[0] }).ToOkWithStringError();
+        }
+
+        if (Directory.Exists(options.MigrationPath))
         {
             return options.ToOkWithStringError();
         }
@@ -71,7 +90,7 @@ internal class VerbBuilder
         var projectFiles =
             Directory
                 .EnumerateFiles(
-        ".",
+                    ".",
                     $"*{path}.csproj",
                     new EnumerationOptions { RecurseSubdirectories = true, MaxRecursionDepth = 6 })
                 .ToArray();
